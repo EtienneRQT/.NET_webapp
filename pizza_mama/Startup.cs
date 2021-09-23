@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace pizza_mama
 {
@@ -25,10 +26,17 @@ namespace pizza_mama
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // IOC -> Inversion Of Control -> créer des instances ou conserver des instances uniques (singleton)
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Admin";
+                });
+            // IOC -> Inversion Of Control -> crï¿½er des instances ou conserver des instances uniques (singleton)
             // DataContextInstance = new DataContext
             services.AddDbContext<DataContext>(options => 
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            
+            
 
             services.AddRazorPages();
         }
@@ -52,6 +60,7 @@ namespace pizza_mama
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
